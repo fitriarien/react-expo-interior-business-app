@@ -12,6 +12,7 @@ const OrderForm = () => {
   const [hour, setHour] = useState("");
   const [minute, setMinute] = useState("");
   const [ visitDetail, setVisitDetail ] = useState({
+    visitAddress: "",
     visitDate: "",
     visitTime: ""
   });
@@ -41,12 +42,33 @@ const OrderForm = () => {
   useEffect(() => {
     fetchProfile();
     if (day && month && year && hour && minute) {
-      setVisitDetail({
-        visitDate: year+'-'+month+'-'+day,
-        visitTime: hour+':'+minute
-      });
+      setVisitDetail(prev => (
+        { ...prev, visitDate: year+'-'+month+'-'+day, visitTime: hour+':'+minute }
+      ));
+      // setVisitDetail({
+      //   visitDate: year+'-'+month+'-'+day,
+      //   visitTime: hour+':'+minute
+      // });
     }
   }, [day, month, year, hour, minute]);
+
+  const handleOrder = () => {
+    Alert.alert(
+      'Order Project',
+      'Are you sure your data is correct?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        },
+        {
+          text: 'Yes',
+          onPress: submitOrder
+        },
+      ],
+      { cancelable: false }
+    )
+  }
 
   const submitOrder = async () => {
     try {
@@ -56,7 +78,7 @@ const OrderForm = () => {
       const {data, status} = await serverApi.post(`api/order/${userId}`, {
         visit_date: visitDetail.visitDate,
         visit_time: visitDetail.visitTime,
-        visit_address: profile.address
+        visit_address: visitDetail.visitAddress
       }, 
       {
         headers: {
@@ -66,12 +88,12 @@ const OrderForm = () => {
 
       if (status === 200 || status === 201) {
         console.log(status);
-        Alert.alert("Order successfully created!");
         setVisitDetail({
           visitDate: "",
           visitTime: ""
         });
-        navigation.navigate('Order List');
+        navigation.navigate('Order Nav');
+        Alert.alert("Order successfully created!");
       } 
     } catch (error) {
       throw new Error("Something error while fetching!");
@@ -101,8 +123,8 @@ const OrderForm = () => {
             <TextInput 
               style={styles.textInput} 
               placeholder="Address" 
-              value={profile.address} 
-              onChangeText={value => setProfile(curr => { return { ...curr, address: value} } )}
+              value={visitDetail.visitAddress} 
+              onChangeText={value => setVisitDetail(curr => { return { ...curr, visitAddress: value} } )}
             />
             <View >
               <Text style={styles.columnName}>Visit Date: </Text>
@@ -149,7 +171,7 @@ const OrderForm = () => {
           <TouchableOpacity 
             style={[styles.submitButton, (visitDetail.visitDate === '' || visitDetail.visitTime === '' || profile.status === 0) && styles.disabledButton]} 
             disabled={visitDetail.visitDate === '' || visitDetail.visitTime === ''}
-            onPress={submitOrder}
+            onPress={handleOrder}
           >
             <Text style={styles.submitText}>Submit Order</Text>
           </TouchableOpacity>
@@ -207,7 +229,7 @@ const styles = StyleSheet.create({
   textContact: {
     backgroundColor: 'rgba(255, 255, 255, 1)',
     fontSize: 15,
-    padding: 9,
+    padding: 10,
     marginRight: 5,
     borderRadius: 3,
     width: '100%',

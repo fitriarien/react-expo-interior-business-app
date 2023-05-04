@@ -4,10 +4,10 @@ import {View, ScrollView, StyleSheet, Text, Image, TouchableOpacity} from 'react
 import serverApi from '../util/server-api';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { MaterialIcons, AntDesign } from '@expo/vector-icons';
+import OrderCard from '../components/OrderCard';
 
 const OrderList = ({navigation}) => {
   const [orders, setOrders] = useState([]);
-  const [errorMessage, setErrorMessage] = useState(0);
   const [isFound, setIsFound] = useState(false);
 
   const fetchOrders = async () => {
@@ -58,43 +58,7 @@ const OrderList = ({navigation}) => {
       ? 
         orders.map(order => (
           <View key={order.order_id} style={styles.card}>
-            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
-              <View style={{padding: 5}}>
-                <Text style={{fontSize: 17, padding: 5, fontWeight: 'bold'}}>Order Code: {order.order_code}</Text>
-                <Text style={{fontSize: 15, paddingHorizontal: 5}}>Visit Schedule: </Text>
-                <View style={styles.scheduleInfo}>
-                  <MaterialIcons name="date-range" size={24} color="black" />
-                  <Text style={[styles.info, styles.schedule]}>{order.visit_date}</Text>
-                  <Text style={[styles.info, styles.schedule]}>{order.visit_time}</Text>
-                </View>
-              </View>
-              <View style={styles.buttonArea}>
-                <TouchableOpacity onPress={() => goToDetails(order.order_id)}>
-                  <AntDesign name="rightcircleo" size={24} color="black" />
-                </TouchableOpacity>
-              </View>
-            </View>
-            {/* {order.orderDetDAOList.map((orderDet) => (
-              <View key={orderDet.order_det_id}>
-                <Image style={styles.cover} source={{uri: orderDet.productDAO.imageDAO.image}}/>
-                <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
-                  <View style={{padding: 5}}>
-                    <Text style={styles.productName}>{orderDet.productDAO.product_name}</Text>
-                    <Text style={{fontSize: 15, paddingHorizontal: 5}}>Visit Schedule: </Text>
-                    <View style={styles.scheduleInfo}>
-                      <MaterialIcons name="date-range" size={24} color="black" />
-                      <Text style={[styles.info, styles.schedule]}>{order.visit_date}</Text>
-                      <Text style={[styles.info, styles.schedule]}>{order.visit_time}</Text>
-                    </View>
-                  </View>
-                  <View style={styles.buttonArea}>
-                    <TouchableOpacity onPress={() => goToDetails(order.order_id)}>
-                      <AntDesign name="rightcircleo" size={24} color="black" />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            ))} */}
+            <OrderCard order={order} goToDetails={goToDetails}/>
           </View>
         ))
       :
@@ -103,7 +67,6 @@ const OrderList = ({navigation}) => {
             <Text style={styles.title}>Belum ada proyek yang dipesan.</Text>
             <Text style={styles.subtitle}>Lihat produk dan jadwalkan kunjungan dengan Desainer Profesional kami sekarang!</Text>
           </View>
-
         </View>
       }
     </ScrollView>

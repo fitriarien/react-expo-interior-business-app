@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {View, StyleSheet, ScrollView, Text, TextInput, TouchableOpacity, Alert} from 'react-native';
 import serverApi from '../util/server-api';
 import {SelectList} from 'react-native-dropdown-select-list';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 const Payment = ({ route }) => {
   const { orderId } = route.params;
@@ -23,24 +23,23 @@ const Payment = ({ route }) => {
     {key: "Pelunasan", value: "Pelunasan"},
   ]);
 
-  // const fetchOrder = async () => {
-  //   try {
-  //     const userId = await AsyncStorage.getItem('id');
-  //     const token = await AsyncStorage.getItem('token');
-
-  //     const {data, status} = await serverApi.get(`api/order/${orderId}/${userId}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       }
-  //     })
-
-  //     console.log(status);
-  //     // console.log(data);
-
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
+  const handlePayment = () => {
+    Alert.alert(
+      'Payment',
+      'Are you sure your data is correct?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        },
+        {
+          text: 'Yes',
+          onPress: submitPayment
+        },
+      ],
+      { cancelable: false }
+    )
+  }
 
   const submitPayment = async () => {
     try {
@@ -63,23 +62,19 @@ const Payment = ({ route }) => {
       // console.log(data);
 
       if (status === 200 || status === 201) {
-        Alert.alert("Payment successfully submitted!")
-        navigation.navigate('Order List');
+        navigation.goBack();
         setPayment({
           method: "",
           accountNumber: "",
           amount: 0,
           detail: ""
-        })
+        });
+        Alert.alert("Payment successfully submitted!")
       }
     } catch (error) {
       console.error(error);
     }
   }
-
-  // useEffect(() => {
-  //   fetchOrder();
-  // }, []);
 
   return (
     <ScrollView style={{padding: 10, backgroundColor: '#det534', marginBottom: 5}}>
@@ -101,17 +96,11 @@ const Payment = ({ route }) => {
             <TextInput 
               style={styles.textInput} 
               placeholder="0123456789" 
-              value={payment.accountNumber} 
+              value={payment.accountNumber.toString()} 
               onChangeText={value => setPayment(curr => { return { ...curr, accountNumber: value} } )}
             />
           </View>
         }
-        {/* <TextInput 
-          style={styles.textInput} 
-          placeholder="Bank Transfer" 
-          value={payment.method} 
-          onChangeText={value => setPayment(curr => { return { ...curr, method: value} } )}
-        /> */}
         <Text style={styles.columnName}>Amount: </Text>
         <TextInput 
           style={styles.textInput} 
@@ -130,16 +119,10 @@ const Payment = ({ route }) => {
           dropdownStyles={{backgroundColor: 'white', borderRadius: 0, borderColor: 'white'}} 
           dropdownTextStyles={{fontSize: 15}}
         />
-        {/* <TextInput 
-          style={styles.textInput} 
-          placeholder="Down Payment" 
-          value={payment.detail} 
-          onChangeText={value => setPayment(curr => { return { ...curr, detail: value} } )}
-        /> */}
         <TouchableOpacity 
           style={[styles.submitButton, (payment.method === '' || payment.amount === 0 || payment.detail === '') && styles.disabledButton]} 
           disabled={payment.method === '' || payment.amount === 0 || payment.detail === ''}
-          onPress={submitPayment}
+          onPress={handlePayment}
         >
           <Text style={styles.submitText}>Submit Payment</Text>
         </TouchableOpacity>

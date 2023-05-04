@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, Text, TextInput, TouchableOpacity, ImageBackground} from 'react-native';
+import {View, StyleSheet, Text, TextInput, TouchableOpacity, ImageBackground, Alert} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import serverApi from '../util/server-api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -27,10 +27,11 @@ const Login = () => {
         setUsername("");
         setPassword("");
       } else {
-        console.log(data.errorMessage);
+        Alert.alert('Something error when login');
       }
 
     } catch (error) {
+      Alert.alert('Something error when login');
       console.log(error);
     }
   }
@@ -44,8 +45,14 @@ const Login = () => {
       <ImageBackground style={styles.background} source={require('../assets/login-bg.jpg')}>
         <View style={styles.header}>
           <View style={styles.welcomeArea}>
-            <Text style={styles.welcomeText}>WELCOME!</Text>
+            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+              <Text style={styles.subwelcomeText}>Welcome to </Text>
+              <Text style={styles.welcomeText}>in</Text>
+              <Text style={styles.subwelcomeText}>studio!</Text>
+            </View>
+            <Text style={styles.subText}>Explore new designs everyday!</Text>
           </View>
+          
         </View>
 
         <View style={styles.body}>
@@ -90,15 +97,25 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   welcomeArea: {
-    alignItems: 'center',
     marginVertical: 100,
-    padding: 2
+    padding: 2,
   },
   welcomeText: {
     fontWeight: 'bold',
     fontSize: 28,
     fontStyle: 'italic',
     color: 'black'
+  },
+  subwelcomeText: {
+    fontSize: 28,
+    fontStyle: 'italic',
+    color: 'black'
+  },
+  subText: {
+    fontSize: 20,
+    fontStyle: 'italic',
+    color: 'black',
+    textAlign: 'center'
   },
   body: {
     justifyContent: 'center',

@@ -97,6 +97,7 @@ const Signup = ({navigation}) => {
               style={styles.textInput} 
               placeholder="Phone Number" 
               value={dataRegist.contact}
+              keyboardType="numeric"
               onChangeText={value => setDataRegist(curr => { return { ...curr, contact: value } })}
             />
             <TextInput 
