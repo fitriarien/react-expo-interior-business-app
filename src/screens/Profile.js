@@ -1,18 +1,14 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {View, StyleSheet, Alert, Text, TouchableOpacity} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
 import serverApi from '../util/server-api';
 import { FontAwesome } from '@expo/vector-icons';
+import Logout from '../components/Logout';
 
 const Profile = () => {
   const [ userProfile, setUserProfile ] = useState({});
   const [ isActive, setIsActive ] = useState(true);
-  const [ showAlert, setShowAlert ] = useState(false);
-  const navigation = useNavigation();
-  const dispatch = useDispatch();
 
   const fetchProfile = async () => {
     const id = await AsyncStorage.getItem('id');
@@ -29,7 +25,11 @@ const Profile = () => {
       setUserProfile(data);
       
       if (data.status === 1) {
+        // dispatch({ type: 'SET_ACTIVE'});
         setIsActive(true);
+      } else {
+        // dispatch({ type: 'SET_DEACT'});
+        setIsActive(false);
       }
 
     } catch (error) {
@@ -46,43 +46,6 @@ const Profile = () => {
       fetchProfile();
     }, [])
   );
-
-  const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel'
-        },
-        {
-          text: 'Yes',
-          onPress: logout
-        },
-      ],
-      { cancelable: false }
-    )
-  }
-
-  const logout = async () => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-
-      await serverApi.post('api/logout/', null, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      await AsyncStorage.clear();
-      dispatch({ type: 'SET_LOGOUT'});
-      navigation.navigate('Login');
-
-    } catch(err) {
-      Alert.alert(err)
-    }
-  }
 
   const handleDeactive = () => {
     Alert.alert(
@@ -142,9 +105,7 @@ const Profile = () => {
           <Text style={styles.dataField}>Inactive</Text>
         }
       </View>
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
+      <Logout />
       { isActive && 
         <TouchableOpacity style={styles.deleteButton} onPress={handleDeactive}>
           <Text style={styles.deleteText}>Deactive Account</Text>

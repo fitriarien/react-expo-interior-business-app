@@ -98,6 +98,7 @@ const Payment = ({ route }) => {
               placeholder="0123456789" 
               value={payment.accountNumber.toString()} 
               onChangeText={value => setPayment(curr => { return { ...curr, accountNumber: value} } )}
+              keyboardType='numeric'
             />
           </View>
         }

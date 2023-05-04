@@ -8,10 +8,12 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import OrderDetCard from '../components/OrderDetCard';
 import PaymentDetCard from '../components/PaymentDetCard';
 import TotalPayment from '../components/TotalPayment';
+import RemainingPayment from '../components/RemainingPayment';
 
 const OrderDetail = ({route, navigation}) => {
   const { orderId } = route.params;
-  const [ details, setDetails ] = useState({});
+  const [isFound, setIsFound] = useState(false);
+  const [details, setDetails] = useState({});
   const [orderDetList, setOrderDetList] = useState([]);
   const [paymentList, setPaymentList] = useState([]);
   const [totalPayment, setTotalPayment] = useState(0);
@@ -34,10 +36,16 @@ const OrderDetail = ({route, navigation}) => {
       // console.log(data);
       // console.log(JSON.stringify(data));
 
-      setDetails(data);
-      setOrderDetList(data.orderDetDAOList);
-      setPaymentList(data.paymentDAOList);
+      if (status === 200) {
+        setIsFound(true);
+        setDetails(data);
+        setOrderDetList(data.orderDetDAOList);
+        setPaymentList(data.paymentDAOList);
+      }
 
+      if (data.order_amount === 0) {
+        setIsFound(false);
+      }
     } catch (error) {
       throw new Error('Something error while fetching!');
     }
@@ -76,22 +84,37 @@ const OrderDetail = ({route, navigation}) => {
 
   return (
     <ScrollView key={orderId} style={styles.card}>
-      {orderDetList.map(orderDet => (
-        <View key={orderDet.order_det_id}>
-          <OrderDetCard orderDet={orderDet}/>
+      { isFound 
+      ? 
+        <View>
+          {orderDetList.map(orderDet => (
+            <View key={orderDet.order_det_id}>
+              <OrderDetCard orderDet={orderDet}/>
+            </View>
+          ))}
+          <View style={styles.contentTotal}>
+            <Text style={[styles.info, styles.totalCost]}>Total Cost</Text>
+            <Text style={[styles.info, styles.totalCost]}>{valueFormattedWithSymbol}</Text>
+          </View>
+          <Text style={[styles.info, styles.paymentTitle]}>Payment</Text>
+          {paymentList.map(payment => (
+            <View key={payment.payment_id}>
+              <PaymentDetCard payment={payment} />
+            </View>
+          ))}
+          <TotalPayment paymentList={paymentList} />
+          <RemainingPayment paymentList={paymentList} orderAmount={details.order_amount} setIsFullPaid={setIsFullPaid}/>
+          <TouchableOpacity style={[styles.payButton, isFullPaid && styles.disabledButton]} onPress={handlePayButton}>
+            <Text style={styles.payText}>Pay</Text>
+          </TouchableOpacity>
         </View>
-      ))}
-      <Text style={[styles.info, styles.totalCost]}>Total Cost: {valueFormattedWithSymbol}</Text>
-      <Text style={[styles.info, styles.paymentTitle]}>Payment</Text>
-      {paymentList.map(payment => (
-        <View key={payment.payment_id}>
-          <PaymentDetCard payment={payment} />
+      :
+        <View>
+          <View style={{alignItems: 'center', padding: 25}}>
+            <Text style={styles.title}>There are no recent updates.</Text>
+          </View>
         </View>
-      ))}
-      <TotalPayment paymentList={paymentList} />
-      <TouchableOpacity style={styles.payButton} onPress={handlePayButton}>
-        <Text style={styles.payText}>Pay</Text>
-      </TouchableOpacity>
+      }
     </ScrollView>
   );  
 }
@@ -109,18 +132,23 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   totalCost: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: 'bold',
     padding: 8,
     textAlign: 'right',
-    marginHorizontal: 8,
-    borderBottomColor: 'gray',
+  },
+  contentTotal: {
+    display: 'flex', 
+    flexDirection: 'row', 
+    justifyContent: 'space-between',
+    borderBottomColor: 'gray', 
     borderBottomWidth: 2,
+    marginHorizontal: 8
   },
   paymentTitle: {
     fontSize: 17,
     fontWeight: 'bold',
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     
   },
   payButton: {
@@ -136,6 +164,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
     fontWeight: '600',
+  },
+  disabledButton: {
+    opacity: 0.5
   }
 })
 

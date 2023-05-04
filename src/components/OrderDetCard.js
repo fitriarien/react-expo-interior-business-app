@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   productInfo: {
     marginHorizontal: 8,
     paddingVertical: 5,
-    borderBottomColor: 'gray',
+    borderBottomColor: '#ccc',
     borderBottomWidth: 2,
   },
   info: {
