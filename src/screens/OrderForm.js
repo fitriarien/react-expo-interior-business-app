@@ -89,6 +89,7 @@ const OrderForm = () => {
       if (status === 200 || status === 201) {
         console.log(status);
         setVisitDetail({
+          visitAddress: "",
           visitDate: "",
           visitTime: ""
         });
@@ -96,6 +97,7 @@ const OrderForm = () => {
         Alert.alert("Order successfully created!");
       } 
     } catch (error) {
+      Alert.alert('Something error while fetching!');
       throw new Error("Something error while fetching!");
     }
   }
@@ -134,21 +136,27 @@ const OrderForm = () => {
                 style={styles.dateInput} 
                 placeholder="DD" 
                 value={day} 
+                maxLength={2}
                 onChangeText={setDay}
+                keyboardType='numeric'
               />
               <Text style={styles.separator}>-</Text>
               <TextInput 
                 style={styles.dateInput} 
                 placeholder="MM" 
                 value={month} 
+                maxLength={2}
                 onChangeText={setMonth}
+                keyboardType='numeric'
               />
               <Text style={styles.separator}>-</Text>
               <TextInput 
                 style={styles.yearInput} 
                 placeholder="YYYY" 
                 value={year} 
+                maxLength={4}
                 onChangeText={setYear}
+                keyboardType='numeric'
               />
             </View>
             <Text style={styles.columnName}>Visit Time: </Text>
@@ -157,20 +165,24 @@ const OrderForm = () => {
                 style={styles.dateInput} 
                 placeholder="HH" 
                 value={hour} 
+                maxLength={2}
                 onChangeText={setHour}
+                keyboardType='numeric'
               />
               <Text style={styles.separator}> : </Text>
               <TextInput 
                 style={styles.dateInput} 
                 placeholder="MM" 
                 value={minute} 
+                maxLength={2}
                 onChangeText={setMinute}
+                keyboardType='numeric'
               />
             </View>
           </View>
           <TouchableOpacity 
             style={[styles.submitButton, (visitDetail.visitDate === '' || visitDetail.visitTime === '' || profile.status === 0) && styles.disabledButton]} 
-            disabled={visitDetail.visitDate === '' || visitDetail.visitTime === ''}
+            disabled={visitDetail.visitDate === '' || visitDetail.visitTime === '' || visitDetail.visitAddress === '' || profile.status === 0}
             onPress={handleOrder}
           >
             <Text style={styles.submitText}>Submit Order</Text>

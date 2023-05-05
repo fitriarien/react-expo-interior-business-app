@@ -78,8 +78,6 @@ const OrderDetail = ({route, navigation}) => {
     } else {
       Alert.alert("Something error with the payment!")
     }
-
-    total = 0;
   }
 
   return (
@@ -103,7 +101,7 @@ const OrderDetail = ({route, navigation}) => {
             </View>
           ))}
           <TotalPayment paymentList={paymentList} />
-          <RemainingPayment paymentList={paymentList} orderAmount={details.order_amount} setIsFullPaid={setIsFullPaid}/>
+          <RemainingPayment paymentList={paymentList} orderAmount={details.order_amount} />
           <TouchableOpacity style={[styles.payButton, isFullPaid && styles.disabledButton]} onPress={handlePayButton}>
             <Text style={styles.payText}>Pay</Text>
           </TouchableOpacity>
@@ -167,7 +165,12 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     opacity: 0.5
-  }
+  },
+  title: {
+    fontSize: 18,
+    textAlign: 'center',
+    padding: 5,
+  },
 })
 
 export default OrderDetail;

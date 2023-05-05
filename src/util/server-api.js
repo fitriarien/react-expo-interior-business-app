@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Alert } from 'react-native';
 
 const serverApi = axios.create({
   baseURL: 'http://192.168.101.13:8081/',
@@ -9,6 +10,7 @@ const serverApi = axios.create({
 serverApi.interceptors.response.use((response) => {
   return response;
 }, (error) => {
+  // Alert.alert('Something error while fetching');
   return Promise.reject(error.message);
 })
 

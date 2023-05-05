@@ -11,7 +11,7 @@ const OrderNavigation = () => {
   return (
     <Stack.Navigator screenOptions={{unmountOnBlur: true}}>
       <Stack.Screen name='Order List' component={OrderList} />
-      <Stack.Screen name='Order Detail' component={OrderDetail} />
+      <Stack.Screen name='Order Detail' component={OrderDetail} options={{unmountOnBlur: true}}/>
       <Stack.Screen name='Payment' component={Payment} />
     </Stack.Navigator>
   );

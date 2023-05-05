@@ -14,7 +14,11 @@ const OrderDetCard = ({orderDet}) => {
         <Text style={[styles.info, styles.productName]}>{orderDet.productDAO.product_name}</Text>
         <Text style={[styles.info, styles.productDet]}>Model: {orderDet.productDAO.product_model}</Text>
         <Text style={[styles.info, styles.productDet]}>Theme: {orderDet.product_theme}</Text>
-        <Text style={[styles.info, styles.productDet]}>Size: {orderDet.product_size} m2</Text>
+        <View style={{display: 'flex', flexDirection: 'row'}}>
+          <Text style={[styles.info, styles.productDet]}>Size: {orderDet.product_size} m</Text>
+          <Text style={{fontSize: 12, lineHeight: 18}}>2</Text>
+        </View>
+        
         <Text style={[styles.info, styles.productCost]}>Subtotal: {valueFormattedWithoutSymbol}</Text>
       </View>
     </View>

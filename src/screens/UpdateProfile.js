@@ -113,7 +113,10 @@ const UpdateProfile = ({navigation}) => {
             }
           }}
         />
-        <TouchableOpacity style={[styles.submitButton, (updatedData.name === "" || updatedData.email === "" || updatedData.contact === "" || updatedData.address === "") && styles.disabledButton]} onPress={updateProfile}>
+        <TouchableOpacity 
+          style={[styles.submitButton, (updatedData.name === "" || updatedData.email === "" || updatedData.contact === "" || updatedData.address === "") && styles.disabledButton]} 
+          onPress={updateProfile}
+        >
           <Text style={styles.submitText}>Update</Text>
         </TouchableOpacity>
       </View>

@@ -24,9 +24,9 @@ const Loading = ({navigation}) => {
   }, []);
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView>
       <ImageBackground style={{height: '100%', resizeMode: 'cover'}} source={require('../assets/login-bg.jpg')}>
-        <Text style={{fontWeight: 'bold', fontSize: 25, alignSelf: 'center', justifyContent: 'center'}}>Loading...</Text>
+        <Text style={{fontWeight: 'bold', fontSize: 25, alignSelf: 'center'}}>Loading...</Text>
       </ImageBackground>
     </SafeAreaView>
   );

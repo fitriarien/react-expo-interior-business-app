@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Text, TextInput, TouchableOpacity, ImageBackground, Alert} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import serverApi from '../util/server-api';
@@ -12,26 +12,48 @@ const Login = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const isLogin = useSelector(state => state.isLogin);
+  const [isValidUname, setIsValidUname] = useState(false);
+  const [isValidPass, setIsValidPass] = useState(false);
+
+  useEffect(() => {
+    const regexUname = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$/;
+    setIsValidUname(regexUname.test(username));
+    const regexPassword = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+    setIsValidPass(regexPassword.test(password));
+  }, [username, password]);
 
   const login = async () => {
     try {
       const {status, data} = await serverApi.post('login', {username: username, password: password});
-      
-      if (status === 200) {
-        await AsyncStorage.setItem('id', data.id.toString());
-        await AsyncStorage.setItem('token', data.token);
-        
-        dispatch({type: 'SET_LOGIN'});
+      // await AsyncStorage.setItem('status', status);
+      console.log(status);
 
-        navigation.navigate('Main Tab Menu');
-        setUsername("");
-        setPassword("");
+      if (status === 200) {
+        if (data.role === 'customer') {
+          await AsyncStorage.setItem('id', data.id.toString());
+          await AsyncStorage.setItem('token', data.token);
+          
+          dispatch({type: 'SET_LOGIN'});
+
+          navigation.navigate('Main Tab Menu');
+          setUsername("");
+          setPassword("");
+        } else {
+          Alert.alert('Admin cannot login');
+        }
       } else {
         Alert.alert('Something error when login');
       }
-
     } catch (error) {
-      Alert.alert('Something error when login');
+      if (error === 'Request failed with status code 403') {
+        Alert.alert('You input the wrong password.');
+      } else if (error === 'Request failed with status code 404') {
+        Alert.alert('Your account is not found.');
+      } else if (error === 'Request failed with status code 406') {
+        Alert.alert('Your account is inactive. Please contact the administrator!');
+      } else {
+        Alert.alert('Something error when login');
+      }
       console.log(error);
     }
   }
@@ -63,6 +85,7 @@ const Login = () => {
               value={username} 
               onChangeText={setUsername}
             />
+            {!isValidUname && username && <Text style={{alignSelf: 'flex-end', fontWeight: 'bold', marginHorizontal: 35, color: 'red'}}>Invalid Username</Text>}
             <TextInput 
               style={styles.textInput} 
               placeholder="Password" 
@@ -70,6 +93,7 @@ const Login = () => {
               onChangeText={setPassword} 
               secureTextEntry={true}
             />
+            {!isValidPass && password && <Text style={{alignSelf: 'flex-end', fontWeight: 'bold', marginHorizontal: 35, color: 'red'}}>Invalid Password</Text>}
           </View>
           <View style={styles.buttonArea}>
             <TouchableOpacity style={styles.buttonLogin} onPress={login}>

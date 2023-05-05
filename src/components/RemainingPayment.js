@@ -2,7 +2,7 @@ import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import { formatCurrency, getSupportedCurrencies } from "react-native-format-currency";
 
-const RemainingPayment = ({paymentList, orderAmount, setIsFullPaid}) => {
+const RemainingPayment = ({paymentList, orderAmount}) => {
   let totalPayment = 0;
   const subPayment = paymentList.map(sub => {
     return totalPayment += sub.payment_amount;
@@ -10,14 +10,10 @@ const RemainingPayment = ({paymentList, orderAmount, setIsFullPaid}) => {
   let remainingPayment = orderAmount-totalPayment;
   const [valueFormattedWithSymbol, valueFormattedWithoutSymbol, symbol] = formatCurrency({ amount: Number(remainingPayment), code: "IDR" });
 
-  if (remainingPayment === 0) {
-    setIsFullPaid(true);
-  }
-  
   return (
     <View style={styles.contentTotal}>
       <Text style={[styles.info, styles.totalCost]}>Remaining Payment</Text>
-      <Text style={[styles.info, styles.remainingCost]}>- {valueFormattedWithSymbol}</Text>
+      <Text style={[styles.info, styles.remainingCost, (remainingPayment === 0) && styles.zero]}>{valueFormattedWithSymbol}</Text>
     </View>
   );
 }
@@ -47,6 +43,9 @@ const styles = StyleSheet.create({
     padding: 8,
     textAlign: 'right',
     color: 'red'
+  },
+  zero: {
+    color: 'black'
   }
 })
 

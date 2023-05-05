@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, Text, TextInput, TouchableOpacity, ImageBackground} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, StyleSheet, Text, TextInput, TouchableOpacity, ImageBackground, Alert} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import serverApi from '../util/server-api';
 
@@ -12,15 +12,30 @@ const Signup = ({navigation}) => {
     contact: "",
     address: "",
   });
+  const [username, setUsername] = useState('');
+  const [isValidUname, setIsValidUname] = useState(false);
+  const [password, setPassword] = useState('');
+  const [isValidPass, setIsValidPass] = useState(false);
+  const [email, setEmail] = useState('');
+  const [isValid, setIsValid] = useState(false);
+
+  useEffect(() => {
+    const regexUname = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$/;
+    setIsValidUname(regexUname.test(username));
+    const regexPassword = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+    setIsValidPass(regexPassword.test(password));
+    const regex = /([a-zA-Z0-9]+(?:[._+-][a-zA-Z0-9]+)*)@([a-zA-Z0-9]+(?:[.-][a-zA-Z0-9]+)*[.][a-zA-Z]{2,})/;
+    setIsValid(regex.test(email));
+  }, [username, password, email]);
 
   const signUp = async () => {
     // console.log(dataRegist);
     try {
       const {status, data} = await serverApi.post('register', {
-        username: dataRegist.username,
-        password: dataRegist.password,
+        username: username,
+        password: password,
         name: dataRegist.name,
-        email: dataRegist.email,
+        email: email,
         contact: dataRegist.contact,
         address: dataRegist.address,
         role: "customer"
@@ -41,6 +56,23 @@ const Signup = ({navigation}) => {
         console.log(data.errorMessage);
       }
     } catch (error) {
+      if (error === 'Request failed with status code 410') {
+        Alert.alert('Username has already been used.');
+      } else if (error === 'Request failed with status code 411') {
+        Alert.alert('Invalid Username. Please re-enter the username!');
+      } else if (error === 'Request failed with status code 412') {
+        Alert.alert('Invalid Password. Please re-enter the password!');
+      } else if (error === 'Request failed with status code 413') {
+        Alert.alert('Invalid Email. Please re-enter the email!');
+      } else if (error === 'Request failed with status code 414') {
+        Alert.alert('Invalid Username & Password.');
+      } else if (error === 'Request failed with status code 415') {
+        Alert.alert('Invalid Email & Password.');
+      } else if (error === 'Request failed with status code 416') {
+        Alert.alert('Invalid Username & Email.');
+      } else if (error === 'Request failed with status code 417') {
+        Alert.alert('Please re-enter the form correctly!');
+      }
       console.log(error);
     }
   }
@@ -71,22 +103,25 @@ const Signup = ({navigation}) => {
             <TextInput 
               style={styles.textInput} 
               placeholder="Username" 
-              value={dataRegist.username}
-              onChangeText={value => setDataRegist(curr => { return { ...curr, username: value } })}
+              value={username}
+              onChangeText={value => setUsername(value)}
             />
+            {!isValidUname && username && <Text style={{alignSelf: 'flex-start', fontWeight: 'bold', marginHorizontal: 35}}>Invalid Username</Text>}
             <TextInput 
               style={styles.textInput} 
               placeholder="Email" 
-              value={dataRegist.email}
-              onChangeText={value => setDataRegist(curr => { return { ...curr, email: value } })}
+              value={email}
+              onChangeText={value => setEmail(value)}
             />
+            {!isValid && email && <Text style={{alignSelf: 'flex-start', fontWeight: 'bold', marginHorizontal: 35}}>Invalid Email</Text>}
             <TextInput 
               style={styles.textInput} 
               placeholder="Password" 
-              value={dataRegist.password}
-              onChangeText={value => setDataRegist(curr => { return { ...curr, password: value } })} 
+              value={password}
+              onChangeText={value => setPassword(value)} 
               secureTextEntry={true}
             />
+            {!isValidPass && password && <Text style={{alignSelf: 'flex-start', fontWeight: 'bold', marginHorizontal: 35}}>Invalid Password</Text>}
             <TextInput 
               style={styles.textInput} 
               placeholder="Name" 
