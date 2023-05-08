@@ -62,17 +62,21 @@ const Payment = ({ route }) => {
       // console.log(data);
 
       if (status === 200 || status === 201) {
-        navigation.goBack();
         setPayment({
           method: "",
           accountNumber: "",
           amount: 0,
           detail: ""
         });
+        
+        navigation.navigate('Order List');
         Alert.alert("Payment successfully submitted!")
       }
     } catch (error) {
-      console.error(error);
+      if (error === 'Request failed with status code 403') {
+        Alert.alert('Your account is inactive.')
+      }
+      // console.error(error);
     }
   }
 
@@ -96,7 +100,7 @@ const Payment = ({ route }) => {
             <TextInput 
               style={styles.textInput} 
               placeholder="0123456789" 
-              value={payment.accountNumber.toString()} 
+              value={payment.accountNumber} 
               onChangeText={value => setPayment(curr => { return { ...curr, accountNumber: value} } )}
               keyboardType='numeric'
             />

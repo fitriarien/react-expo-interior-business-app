@@ -42,17 +42,15 @@ const Login = () => {
           Alert.alert('Admin cannot login');
         }
       } else {
-        Alert.alert('Something error when login');
+        Alert.alert('Something error while login!');
       }
     } catch (error) {
-      if (error === 'Request failed with status code 403') {
-        Alert.alert('You input the wrong password.');
-      } else if (error === 'Request failed with status code 404') {
-        Alert.alert('Your account is not found.');
+      if (error === 'Request failed with status code 403' || error === 'Request failed with status code 404') {
+        Alert.alert(`Username and password doesn't match`);
       } else if (error === 'Request failed with status code 406') {
         Alert.alert('Your account is inactive. Please contact the administrator!');
       } else {
-        Alert.alert('Something error when login');
+        Alert.alert('Something error while login!');
       }
       console.log(error);
     }

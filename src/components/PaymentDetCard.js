@@ -4,12 +4,12 @@ import { formatCurrency, getSupportedCurrencies } from "react-native-format-curr
 
 const PaymentDetCard = ({payment}) => {
   const [valueFormattedWithSymbol, valueFormattedWithoutSymbol, symbol] = formatCurrency({ amount: Number(payment.payment_amount), code: "IDR" });
-  const formattedDate = payment.payment_date.toLocalDateString();
+  // const formattedDate = payment.payment_date.toLocalDateString();
 
   return (
     <View style={styles.paymentInfo}>
       <Text style={[styles.info, styles.productDet]}>Payment ID: {payment.payment_id}</Text>
-      <Text style={[styles.info, styles.productDet]}>Date: {formattedDate}</Text>
+      <Text style={[styles.info, styles.productDet]}>Date: {payment.payment_date}</Text>
       <Text style={[styles.info, styles.productDet]}>Method: {payment.payment_method}</Text>
       <Text style={[styles.info, styles.productCost]}>Amount: {valueFormattedWithoutSymbol}</Text>
       <Text style={[styles.info, styles.productDet]}>Notes: {payment.payment_detail}</Text>
